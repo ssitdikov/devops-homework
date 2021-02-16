@@ -64,7 +64,7 @@ function selector() {
     selector
     ;;
   "0" | "0)")
-    run="sudo netstat -tunapl $params | cut -d: -f1 | sort | uniq -c | sort | tail -n$rows | grep -oP '(\d+\.){3}\d+' | while read IP ; do whois $IP | awk -F':' '/^Organization/ {print \$2}' ; done"
+    run="sudo netstat -tunapl $params | cut -d: -f1 | sort | uniq -c | sort | tail -n$rows | grep -oP '(\d+\.){3}\d+' | while read IP ; do whois \$IP | awk -F':' '/^Organization/ {print \$2}' ; done"
     eval $run
     ;;
   esac
