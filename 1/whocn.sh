@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-# @TODO Add secure parser (for excluding something like cat /etc/passwd & etc
-
 clear
 
 pid=0
