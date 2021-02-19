@@ -10,8 +10,10 @@ params=""
 digits='^[0-9]+$'
 
 function get_info() {
-  run="sudo netstat -tunapl $params | cut -d: -f1 | sort | uniq -c | sort | tail -n$rows | grep -oP '(\d+\.){3}\d+' | while read IP ; do whois \$IP | awk -F':' '/^Organization/ {print \$2}' ; done"
-  eval $run
+  netstat -tunapl "${params}" | cut -d: -f1 | sort | uniq -c | sort | tail -n"${rows}" |
+    grep -oP '(\d+\.){3}\d+' | while read IP; do
+      whois $IP | awk -F':' '/^Organization/ {print $2}'
+    done
 }
 
 function help() {
@@ -35,18 +37,18 @@ function selector() {
   read -p "Operation: " operation
   case $operation in
   "1" | "1)")
-    read -p "Enter PID of process: " pid
+    read -rp "Enter PID of process: " pid
     set_pid "$pid"
     selector
     ;;
   "2" | "2)")
-    read -p "Enter name of process: " name
+    read -rp "Enter name of process: " name
     set_process_name "$name"
 
     selector
     ;;
   "3" | "3)")
-    read -p "Enter max result rows: " rows_num
+    read -rp "Enter max result rows: " rows_num
     set_result_rows "$rows_num"
     selector
     ;;
