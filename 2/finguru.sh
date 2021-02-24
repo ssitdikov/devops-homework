@@ -10,7 +10,10 @@ function get_prices_for_last_days() {
 
 function get_prices_for_period() {
   START_ROW=$(($1 * 2 + 1))
-  jq -r ".prices[][]" quotes.json | awk -v start_row=$START_ROW 'NR>=start_row' | awk 'NR % 2 {print substr($1, 1, length($1)-3)}' | awk '{("date +%m -d @"$1)|getline $1}1' | awk -v current="02" '$1 == current {print NR}'
+  # NR % 2' | awk '{ print last,$0; last=$0 }'
+  NEEDED_ROWS=$(jq -r ".prices[][]" quotes.json | awk -v start_row=$START_ROW 'NR>=start_row' |
+  awk 'NR % 2 {print substr($1, 1, length($1)-3)}' |
+  awk '{("date +%m:%Y -d @"$1)|getline $1}1' | awk -F: -v current="02" '$1 == current {print $2 "," NR}')
 }
 
 function get_mean_price_for_last_days() {
@@ -48,7 +51,7 @@ function get_least_volatile() {
   done
   echo "Analyze since $year, for $month"
   SINCE_DATE=$(date -d "$year-01-01" +"%s")
-  ALL_DAYS_COUNT=$(jq -r ".prices[][]" quotes.json | awk 'NR % 2' | wc -l)
+  jq -r ".prices[][]" quotes.json | awk '{ print last,$0; last=substr($1, 1, length($1)-3) }' | awk 'NR % 2 == 0'
   LAST_DAYS=$(jq -r ".prices[][]" quotes.json | awk 'NR % 2 {print substr($1, 1, length($1)-3)}' | awk -v since_date="$SINCE_DATE" '$1 > since_date' | wc -l)
   START_ROW_NUM=$((ALL_DAYS_COUNT - LAST_DAYS))
   get_prices_for_period "$START_ROW_NUM" "$ANALYZE_MONTH" "$year"
