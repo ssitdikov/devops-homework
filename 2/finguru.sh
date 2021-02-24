@@ -14,6 +14,7 @@ function get_prices_for_period() {
   NEEDED_ROWS=$(jq -r ".prices[][]" quotes.json | awk -v start_row=$START_ROW 'NR>=start_row' |
   awk 'NR % 2 {print substr($1, 1, length($1)-3)}' |
   awk '{("date +%m:%Y -d @"$1)|getline $1}1' | awk -F: -v current="02" '$1 == current {print $2 "," NR}')
+  jq -r ".prices[][]" quotes.json | awk -v start_row=$START_ROW 'NR>=start_row' | awk 'NR % 2 {print substr($1, 1, length($1)-3)}' | awk '{("date +%m -d @"$1)|getline $1}1' | awk -v current="02" '$1 == current {print NR}'
 }
 
 function get_mean_price_for_last_days() {
