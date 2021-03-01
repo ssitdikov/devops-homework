@@ -15,7 +15,7 @@ function get_open_pr_info() {
     fi
   fi
   echo "Is anybody productive contributors here?"
-  echo "$PR_REQUESTS" | jq -r '.[].user.login' | uniq -c | sort -r | awk '$1 > 1 {print $2" has "$1" open PR"}'
+  echo "$PR_REQUESTS" | jq -r '.[].user.login' | sort | uniq -c | sort -gr | awk '$1 > 1 {print $2" has "$1" open PR"}'
 
   echo "Author and name of PRs"
   echo "$PR_REQUESTS" | jq -r '.[] | { "user":  .user.login , "label": .title, "number": .number}'
