@@ -1,0 +1,2 @@
+[app]
+test-vm.tatar.dev   ansible_ssh_host=84.201.147.26 ansible_ssh_user=test ansible_ssh_private_key_file=./id_rsa
