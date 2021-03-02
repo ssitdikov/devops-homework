@@ -4,7 +4,7 @@ clear
 
 function get_open_pr_info() {
   PR_REQUESTS=$(curl -sb -H "Accept: application/json" "$1/pulls")
-  OPEN_PR_NUM=$(echo "$PR_REQUESTS"  | jq '. | length')
+  OPEN_PR_NUM=$(echo "$PR_REQUESTS" | jq '. | length')
   if [ "$OPEN_PR_NUM" -eq "0" ]; then
     echo "There is no open pull requests"
   else
@@ -18,7 +18,8 @@ function get_open_pr_info() {
   echo "$PR_REQUESTS" | jq -r '.[].user.login' | uniq -c | sort -r | awk '$1 > 1 {print $2" has "$1" open PR"}'
 
   echo "Author and name of PRs"
-  echo "$PR_REQUESTS" | jq -r '.[] | { "user":  .user.login , "label": .title, "number": .number}'
+  JSON_RESULT=$(echo "$PR_REQUESTS" | jq -r 'group_by(.user.login)[] | {(.[0].user.login): [.[] | .title] | join("; ")}')
+  echo $JSON_RESULT | jq -r 'keys[] as $k | "- \($k): \(.[$k])"'
 }
 
 BASE_API_URL=$(echo $1 | awk -F/ '{api_url="https://api.github.com/repos/"$4"/"$5; print api_url}')
