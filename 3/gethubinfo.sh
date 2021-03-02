@@ -12,7 +12,7 @@ function get_open_pr_info() {
   OPEN_PR_NUM_PAGE=1
   PR_REQUESTS=()
   while [[ $OPEN_PR_NUM_PAGE -gt 0 ]]; do
-    PR_REQUESTS_PAGE=$(curl -sb -H "Accept: application/json"  -H "Authorization: token f9a7a3e04a46c607cf0d3b024fc2c4b1802f9613" "$1/pulls?page=$PAGE")
+    PR_REQUESTS_PAGE=$(curl -sb -H "Accept: application/json" "$1/pulls?page=$PAGE")
     OPEN_PR_NUM_PAGE=$(echo "$PR_REQUESTS_PAGE" | jq '. | length')
     PR_REQUESTS+=("$PR_REQUESTS_PAGE")
     ((PAGE++))
@@ -31,9 +31,7 @@ function get_open_pr_info() {
     echo "$PR_REQUESTS" | jq -r '.[].user.login' | sort | uniq -c | sort -gr | awk '$1 > 1 {print $2" has "$1" open PR"}'
 
     echo "Author and name of PRs"
-#    JSON_RESULT=$(echo "$PR_REQUESTS" | jq -cr 'group_by(.user.login)[] | {(.[0].user.login): {"titles":([.[] | .title] | join("; ")), "count": ([.[] | .title] | length ) }}')
     JSON_RESULT=$(echo "$PR_REQUESTS" | jq -cr 'group_by(.user.login)[] | [{ (.[0].user.login): {"titles": ([.[] | .title] | join("; ")), "count": ([.[] | .title] | length ) }}]')
-#    echo $JSON_RESULT | jq -n '[inputs] | add | sort_by(.[].[].count)'
     echo $JSON_RESULT | jq -nr '[inputs] | add | sort_by(.[].count) | reverse[] | keys[] as $k | "- \($k): \(.[$k].titles)"'
 
   fi
