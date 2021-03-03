@@ -3,8 +3,13 @@
 clear
 
 function get_open_pr_info() {
-  if [[ $(echo "$PR_REQUESTS" | jq '.[]') =~ "Not Found" ]]; then
+  FIRST_PAGE=$(curl -sb -H "Accept: application/json" "$1/pulls" | jq '.[]')
+  if [[ $(echo "$FIRST_PAGE") =~ "Not Found" ]]; then
     echo "Repository is not existed"
+    exit
+  fi
+  if [[ $(echo "$FIRST_PAGE") =~ "API rate" ]]; then
+    echo "API rate limit exceeded"
     exit
   fi
   PAGE=1
