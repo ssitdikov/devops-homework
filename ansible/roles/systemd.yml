@@ -1,0 +1,10 @@
+# Systemd configuring
+---
+- hosts: app
+  become: true
+  become_method: sudo
+  tasks:
+    - name: Copy service systemd
+      template: src=../config/emoji.service dest=/lib/systemd/system/emoji.service mode=644
+    - name: Emoji app start
+      service: name=emoji.service state=restarted enabled=yes

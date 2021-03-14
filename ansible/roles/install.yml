@@ -31,13 +31,13 @@
         update: yes
 
 # Run the app
-- hosts: app
-  tasks:
-    - name: Install flask
-      pip: name=flask
-    - name: Install virtualenv
-      pip: name=virtualenv
-    - name: Run flask
-      shell: /home/{{ ansible_ssh_user }}/.local/bin/flask run
-      environment:
-          FLASK_APP:  /home/{{ ansible_ssh_user }}/app
+#- hosts: app
+#  tasks:
+#    - name: Install flask
+#      pip: name=flask
+#    - name: Install virtualenv
+#      pip: name=virtualenv
+#    - name: Run flask
+#      shell: /home/{{ ansible_ssh_user }}/.local/bin/flask run
+#      environment:
+#        FLASK_APP: '/home/{{ ansible_ssh_user }}/app/ansible/app/emoji.py'

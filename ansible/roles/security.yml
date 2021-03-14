@@ -1,0 +1,33 @@
+# Add security to project
+---
+- hosts: app
+  become: true
+  become_method: sudo
+  tasks:
+    - name: Install ufw
+      apt: name=ufw
+    - name: Allow ssh
+      ufw: proto=tcp port=22 rule=allow
+    - name: Allow nginx
+      ufw: proto=tcp port=80 rule=allow
+    - name: Allow nginx ssl
+      ufw: proto=tcp port=443 rule=allow
+    - name: Set ufw policy
+      ufw: state=enabled direction=incoming policy=deny
+
+    - name: Disable root login
+      user:
+        name: root
+        password: '!'
+      register: disable_root_login
+
+    - name: Disable password authentication method
+      ansible.builtin.replace:
+        path: /etc/ssh/sshd_config
+        regexp: 'PasswordAuthentication yes'
+        replace: 'PasswordAuthentication no'
+      register: disable_password_authentication
+
+    - name: Restart sshd.service
+      service: name=sshd state=restarted enabled=yes
+      when: disable_root_login.changed or disable_password_authentication.changed

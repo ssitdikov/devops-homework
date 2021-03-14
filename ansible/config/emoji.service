@@ -1,0 +1,13 @@
+[Unit]
+Description=Run Emoji app
+Requires=network.target
+After=network.target
+
+[Service]
+WorkingDir="/home/{{ ansible_ssh_user }}/app/ansible/app"
+Environment="FLASK_APP=/home/{{ ansible_ssh_user }}/app/ansible/app/emoji.py"
+ExecStart=/home/{{ ansible_ssh_user }}/.local/bin/flask run
+User={{ ansible_ssh_user }}
+
+[Install]
+WantedBy=multi-user.target
