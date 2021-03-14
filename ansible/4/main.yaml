@@ -8,7 +8,13 @@
     - name: Update apt-cache
       apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
     - name: Install pip
-      apt: name=python3-pip state=latest
+      apt:
+        name:
+          - python3-pip
+          - python3-virtualenv
+          - python3-setuptools
+        state: present
+
     - name: Install git
       apt: name=git state=latest
 
@@ -23,13 +29,15 @@
         repo: 'https://github.com/{{ github_user }}/{{ github_project_name}}.git'
         dest: /home/{{ ansible_ssh_user }}/app
         update: yes
-    - name: Install flask
-      pip3: name=flask
 
 # Run the app
 - hosts: app
   tasks:
+    - name: Install flask
+      pip: name=flask
+    - name: Install virtualenv
+      pip: name=virtualenv
     - name: Run flask
-      shell: "flask run"
+      shell: /home/{{ ansible_ssh_user }}/.local/bin/flask run
       environment:
           FLASK_APP:  /home/{{ ansible_ssh_user }}/app
