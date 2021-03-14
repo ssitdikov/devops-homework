@@ -1,3 +1,3 @@
-id_rsa
-id_rsa.pub
+ansible/id_rsa
+ansible/id_rsa.pub
 *.json
